@@ -1,0 +1,29 @@
+<%- include('./includes/head.ejs') %>
+<body>
+    <%- include('./includes/nevigation.ejs') %>
+        
+    <main>
+        <form class="product-form" action="/admin/adduser" method="POST">
+            <div class="form-control">
+                <label for="title">FName </label>
+                <input type="text" name="FName" id="title">
+                <label for="title">LName </label>
+                <input type="text" name="LName" id="title">
+                <label for="title">Gender </label>
+                <input type="text" name="Gender" id="title">
+                <label for="title">Age </label>
+                <input type="number" name="Age" id="title">
+                <label> Gmail</label>
+                <input type="text" name="Gmail">
+                <label> Password</label>
+                <input type="password" name="Password">
+                <label> Confirm Passsword</label>
+                <input type="password" name="CPassword">
+                
+            </div>
+            
+            <button class="btn" type="submit">SignUp</button> 
+        </form>
+        
+    </main>
+<%- include('./includes/end.ejs') %>

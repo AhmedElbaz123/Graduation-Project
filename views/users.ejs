@@ -1,0 +1,35 @@
+<%- include('./includes/head.ejs') %>
+<body class="body">
+    <%- include('./includes/nevigation.ejs') %>
+    <main>
+        
+        <% if(prods.length >0 ) {%>
+            <h1 class="header1"> Users:-</h1>
+            <table>
+                <tr>
+                    <th class="a8">Name</th>
+                    <th class="a8">Gmail</th>
+                    <th class="a8">Ph/Number</th>
+                    <th class="a8">BirthDay</th>
+                </tr> 
+                <% for (let user of prods) {%>
+                    <!-- <h2 style="color: red;">=> <%= user.title %></h2>  -->
+                    
+                        
+                        <tr class="a9">
+                            <td class="a10"><p > <%= user.title %></p></td>
+                            <td class="a10"><p > <%= user.gmail %></p></td>
+                            <td class="a10"><p > <%= user.phone %></p></td>
+                            <td class="a10"><p > <%= user.date%></p></td>
+                        </tr>
+                    
+                <% } %>
+            </table>
+        <% } else {%>
+            <h1>No found users</h1>
+        <% } %>
+       
+        
+    </main>
+</body>
+</html>

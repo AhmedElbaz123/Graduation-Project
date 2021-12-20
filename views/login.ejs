@@ -1,0 +1,19 @@
+<%- include('./includes/head.ejs') %>
+<body>
+    <%- include('./includes/nevigation.ejs') %>
+        
+    <main>
+        <form class="product-form" action="/admin/login" method="POST">
+            <div class="form-control">
+                <label>Gmaill</label>
+                <input type="text" name="Gmail">
+                <label> Password</label>
+                <input type="password" name="password">
+                
+            </div>
+            
+            <button class="btn" type="submit">SignUp</button> 
+        </form>
+        
+    </main>
+<%- include('./includes/end.ejs') %>

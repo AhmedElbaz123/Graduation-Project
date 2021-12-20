@@ -1,0 +1,22 @@
+<%- include('./includes/head.ejs') %>
+<body>
+    <%- include('./includes/nevigation.ejs') %>
+        
+    <main>
+        <form class="product-form" action="/admin/adduser" method="POST">
+            <div class="form-control">
+                <label for="title">User </label>
+                <input type="text" name="title" id="title">
+                <label> Gmail</label>
+                <input type="text" name="gmail">
+                <label> Ph/Number</label>
+                <input type="number" name="phone">
+                <label> BirthDay</label>
+                <input type="date" name="date">
+            </div>
+            
+            <button class="btn" type="submit">ADD User</button> 
+        </form>
+        
+    </main>
+<%- include('./includes/end.ejs') %>
