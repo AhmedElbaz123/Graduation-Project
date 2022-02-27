@@ -1,4 +1,4 @@
-const { redirect, status } = require('express/lib/response');
+//const { redirect, status } = require('express/lib/response');
 const user = require('../model/products');
 //const userurl = require('../model/productsurl');
 const products = require('../routs/admin');
@@ -33,6 +33,15 @@ exports.postuser = (req,res,next) => {
     const age = req.body.Age;
     const password = req.body.Password;
     const cPasssword = req.body.CPassword;
+    //
+        console.log("FName  " + Fname);
+        console.log("Lname  " + Lname);
+        console.log("gmail  " + gmail);
+        console.log("gender  " + gender);
+        console.log("age  " + age);
+        console.log("FName  " + password);
+        console.log("FName  " + cPasssword);
+    //
     user.findOne({gmail: gmail}).then(userDoc => {
             if(userDoc){
                 console.log('gmail is already exite');
@@ -60,6 +69,7 @@ exports.postuser = (req,res,next) => {
         
         .then(result => {
             res.redirect('/admin/home');
+            console.log(result);
         }).catch(err => {
             console.log(err);
         });
@@ -76,6 +86,11 @@ exports.postuser = (req,res,next) => {
 exports.postLogin = (req,res,next) => {
     const gmail = req.body.Gmail;
     const password =  req.body.password;
+    //
+        console.log("gmail" + gmail);
+        console.log("password" + password);
+    //    
+
     user.findOne({gmail:gmail}).then(users => {
         if(!users){
             console.log('user not found*************************');

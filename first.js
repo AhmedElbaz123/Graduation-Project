@@ -55,9 +55,10 @@ const shopRouter = require('./routs/shop');
 
 
 app.use(bodyparser.urlencoded({extended:false}));
+app.use(bodyparser.json()); // rest api
 app.use(express.static(path.join(__dirname,'public')));
-app.use('/admin',adminData.routes);
-app.use(shopRouter);
+app.use('/admin',adminData);
+//app.use(shopRouter);
 app.use('/indexof',(req,res,next) =>  {
     console.log('hello............');
     res.send('<h1>page of index</h1>');
@@ -92,14 +93,17 @@ const store = new MongoDBStore({
   collection: 'users'
 });
 
-mongoose
-  .connect(MONGODB_URI)
-  .then(result => {
-    app.listen(5000);
-  })
-  .catch(err => {
-    console.log(err);
-  });
+// mongoose
+//   .connect(MONGODB_URI)
+//   .then(result => {
+//     app.listen(5000);
+//   })
+//   .catch(err => {
+//     console.log(err);
+//   });
+
+mongoose.connect(MONGODB_URI);
+app.listen(5000);
 
 
 //   echo "# Graduation-Project" >> README.md

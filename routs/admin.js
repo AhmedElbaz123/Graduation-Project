@@ -34,5 +34,7 @@ router.get('/login',usercontroller.getLogin);
 router.post('/adduser',usercontroller.postuser);
 router.post('/login',usercontroller.postLogin);
 //router.get('/login',usercontroller.getLogin);
-exports.routes = router;
+module.exports = router;
+//exports.routes = router; // delete to start api 
+
 //exports.products = products; 
