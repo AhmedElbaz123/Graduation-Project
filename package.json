@@ -5,8 +5,8 @@
   "main": "first.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon first.js",
-    "start-server": "node first.js"
+    "start": "node first.js",
+    "start-server": "nodemon first.js"
   },
   "author": "Maximlian Schwarzuller",
   "license": "ISC",
@@ -28,5 +28,9 @@
     "passport": "^0.5.0",
     "passport-local": "^1.0.0",
     "pug": "^3.0.2"
+  },
+  "engines": {
+    "node": "14.17.5",
+    "npm": "8.3.0"
   }
 }
