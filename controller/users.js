@@ -33,23 +33,14 @@ exports.postuser = (req,res,next) => {
     const age = req.body.Age;
     const password = req.body.Password;
     const cPasssword = req.body.CPassword;
-    //
-        console.log("FName  " + Fname);
-        console.log("Lname  " + Lname);
-        console.log("gmail  " + gmail);
-        console.log("gender  " + gender);
-        console.log("age  " + age);
-        console.log("FName  " + password);
-        console.log("FName  " + cPasssword);
-    //
     user.findOne({gmail: gmail}).then(userDoc => {
             if(userDoc){
                 console.log('gmail is already exite');
-                return res.status(200).redirect('/admin/adduser');
+                return res.status(400).json({'message': 'gmail is already exite'});
                 
             } else if(password != cPasssword) {
                 console.log('wrong CPassword');
-                return res.status(2002).redirect('/admin/adduser');
+                return res.status(4002).json({'message': 'wrong CPassword'});
                 
             } 
                 return bcrypt
@@ -68,7 +59,7 @@ exports.postuser = (req,res,next) => {
         })
         
         .then(result => {
-            res.redirect('/admin/home');
+            res.status(200).json({'message':'Sign Up'});
             console.log(result);
         }).catch(err => {
             console.log(err);
@@ -86,16 +77,13 @@ exports.postuser = (req,res,next) => {
 exports.postLogin = (req,res,next) => {
     const gmail = req.body.Gmail;
     const password =  req.body.password;
-    //
-        console.log("gmail" + gmail);
-        console.log("password" + password);
-    //    
+    
 
     user.findOne({gmail:gmail}).then(users => {
         if(!users){
             console.log('user not found*************************');
 
-            return res.status(2003).redirect('/admin/login');
+            return res.status(404).json({'message': 'user not found'})
             
 
         }
@@ -105,15 +93,15 @@ exports.postLogin = (req,res,next) => {
                 if(doMatch) {
                     
                     console.log('login------------------*********');
-                    return res.status(2004).redirect('/admin/home');
+                    return res.status(200).json({'message':'login(user found)'});
                      
                    
                 }
-                res.redirect('/admin/login');
+                res.status(400).json({'message':'wrong password'});
             })
             .catch(err => {
                 console.log(err);
-                res.redirect('/admin/login');
+                res.status(400).json({'message':'error'});
             })
     })    
 };

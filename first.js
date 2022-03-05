@@ -77,13 +77,13 @@ app.use(express.static(path.join(__dirname,'public')));
 // mongoConnect(() => {
 //     app.listen(5000);
 // });
-app.use(
-    session({
-      secret: 'my secret',
-      resave: false,
-      saveUninitialized: false
-    })
-  );
+// app.use(
+//     session({
+//       secret: 'my secret',
+//       resave: false,
+//       saveUninitialized: false
+//     })
+//   );
 const MONGODB_URI =
 'mongodb+srv://Graduatenum1:9qb2gSvMdPrFrMC@cluster0.bwlfg.mongodb.net/SHOP?retryWrites=true&w=majority';
 
