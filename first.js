@@ -36,7 +36,7 @@ const error = require('./controller/error');
 
 
 
-
+const port = process.env.PORT || 5000
 
 
 
@@ -102,8 +102,10 @@ const store = new MongoDBStore({
 //     console.log(err);
 //   });
 
-mongoose.connect(MONGODB_URI);
-app.listen(5000);
+mongoose.connect(MONGODB_URI, ()=> {
+  app.listen(port);
+
+});
 
 
 //   echo "# Graduation-Project" >> README.md
