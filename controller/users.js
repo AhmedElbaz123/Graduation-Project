@@ -106,6 +106,43 @@ exports.postLogin = (req,res,next) => {
     })    
 };
 
+// update user 
+exports.postUpdateUser = (req,res,next) => {
+    const userId = req.params.userId;
+    console.log('userId   ' + userId);
+    const Fname = req.body.FName;
+    const Lname = req.body.LName;
+    const gender = req.body.Gender;
+    const age = req.body.Age;
+    const password = req.body.Password;
+    const cPasssword = password;
+
+    user.findById(userId)
+    .then(users => {
+        if(!users){
+            
+            return res.status(404).json({"message":"user not found"});
+        }
+
+        users.Fname = Fname;
+        users.Lname = Lname;
+        users.gender = gender;
+        users.age = age;
+        users.password = password;
+        return users.save();
+        
+    })
+    .then(result => {
+        res.status(200).json({"message":"user updated"});
+        console.log(result);
+    })
+
+
+    
+    
+}
+// /update user
+
 exports.getLogin = (req,res,next) => {
     const gmial_login = req.body.Gmail;
     const password_login = req.body.password;
@@ -115,27 +152,3 @@ exports.getLogin = (req,res,next) => {
     })
     
 };
-// exports.postuserurl = (req,res,next) => {
-//     //res.send('from admindata');
-    
-//     const userurll = new userurl(req.body.gmailurl,req.body.urlimage);
-    
-    
-//     //products.products.push({title: req.body.title,gmail: req.body.gmail,phone:req.body.phone,Brday:req.body.date});
-    
-//     //console.log(products.title);
-    
-//     userurll.save();
-    
-// };
-// exports.getdata = (req,res,next) => {
-//     user.fetchall(users => {
-//         res.render('users',{
-//             title: 'users',
-//             path: '/',
-//             prods: users
-//         });
-//     });
-    
-    
-// };

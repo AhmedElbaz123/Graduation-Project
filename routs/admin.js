@@ -33,6 +33,9 @@ router.get('/login',usercontroller.getLogin);
 // router.post('/add_url_image',usercontroller.postuserurl);
 router.post('/adduser',usercontroller.postuser);
 router.post('/login',usercontroller.postLogin);
+// user update
+router.post('/updateUser/:userId',usercontroller.postUpdateUser);
+//  /user update
 //router.get('/login',usercontroller.getLogin);
 module.exports = router;
 //exports.routes = router; // delete to start api 

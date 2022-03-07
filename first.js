@@ -1,24 +1,4 @@
-/*
-const express = require('express');
-const path = require('path');
-const bodyparser = require('body-parser');
-const adminData = require('./routs/admin');
-const index = require('./routes 2/index');
-const app = express();
 
-app.use(bodyparser.urlencoded({extended:false}));
-app.use('/admin',adminData.routes);
-app.use(index);
-
-app.use('/indexof',(req,res,next) =>  {
-    res.send('<h1>page of index</h1>');
-    console.log('hello............');
-});
-
-
-
-app.listen(3000);
-*/
 const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
@@ -93,18 +73,8 @@ const store = new MongoDBStore({
   collection: 'users'
 });
 
-// mongoose
-//   .connect(MONGODB_URI)
-//   .then(result => {
-//     app.listen(5000);
-//   })
-//   .catch(err => {
-//     console.log(err);
-//   });
-
 mongoose.connect(MONGODB_URI, ()=> {
   app.listen(port);
-
 });
 
 
