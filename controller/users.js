@@ -114,8 +114,6 @@ exports.postUpdateUser = (req,res,next) => {
     const Lname = req.body.LName;
     const gender = req.body.Gender;
     const age = req.body.Age;
-    const password = req.body.Password;
-    const cPasssword = password;
 
     user.findById(userId)
     .then(users => {
@@ -128,7 +126,6 @@ exports.postUpdateUser = (req,res,next) => {
         users.Lname = Lname;
         users.gender = gender;
         users.age = age;
-        users.password = password;
         return users.save();
         
     })
