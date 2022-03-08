@@ -93,7 +93,7 @@ exports.postLogin = (req,res,next) => {
                 if(doMatch) {
                     
                     console.log('login------------------*********');
-                    return res.status(200).json({'message':'login(user found)'});
+                    return res.status(200).json({'message':'login(user found)', user: users});
                      
                    
                 }
