@@ -59,7 +59,7 @@ exports.postuser = (req,res,next) => {
         })
         
         .then(result => {
-            res.status(200).json({'message':'Sign Up'});
+            res.status(200).json({'message':'Sign Up', user:result});
             console.log(result);
         }).catch(err => {
             console.log(err);
