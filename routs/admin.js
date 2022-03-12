@@ -35,6 +35,9 @@ router.post('/adduser',usercontroller.postuser);
 router.post('/login',usercontroller.postLogin);
 // user update
 router.post('/updateUser/:userId',usercontroller.postUpdateUser);
+router.post('/resetPassword',usercontroller.postRset);
+router.get('/getReset',usercontroller.getReset);
+router.post('/newPassword/:codeNumber',usercontroller.newPassword);
 //  /user update
 //router.get('/login',usercontroller.getLogin);
 module.exports = router;

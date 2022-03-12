@@ -4,6 +4,15 @@ const user = require('../model/products');
 const products = require('../routs/admin');
 const admindata = require('../routs/admin');
 const bcrypt = require('bcryptjs');
+// send by mailjet 
+
+const mailjet = require ('node-mailjet')
+.connect('2c1f533deccff7811de59645c5290e6f', '4ca77e91331241dd9b409bd5c65d767b')
+
+
+
+// /send by mailjet
+
 
 
 exports.getuser= (req,res,next) => {
@@ -149,3 +158,117 @@ exports.getLogin = (req,res,next) => {
     })
     
 };
+
+// reset password (send by mailget)
+exports.postRset = (req,res,next) => {
+    console.log('req.body.gmail  ' + req.body.gmail);
+    const token = Math.floor(Math.random() * 1000000);
+    if(token <= 99999)
+    {
+        token = token +100000;
+    }
+    user.findOne({gmail: req.body.gmail})
+      .then(user => {
+          if(!user) {
+            return res.status(400).json({"message": "(error) gmail not found !! "});
+          }
+          user.resetToken = token;
+          user.resetExpresion = Date.now() + 3600000;
+          user.save();
+          //res.status(200).json({user:user});
+      })
+      .then(result => {
+        const request = mailjet
+        .post("send", {'version': 'v3.1'})
+        .request({
+          "Messages":[
+            {
+              "From": {
+                "Email": "elbaz8360@gmail.com",
+                "Name": "ahmed"
+              },
+              "To": [
+                {
+                  "Email": req.body.gmail,
+                  "Name": "ahmed"
+                }
+              ],
+              "Subject": "Greetings from Mailjet.",
+              "TextPart": "My first Mailjet email",
+              "HTMLPart": '<h2>Sakkeny<h2><br><h3>please,enter the verfication code </h3> <br> <p>code number: </>' + token,
+              "CustomID": "AppGettingStartedTest"
+            }
+          ]
+        })
+        request
+          .then((result) => {
+            console.log(result.body)
+            res.status(200).json({"message: ":"send code number /n","codeNumber":token});
+          })
+          .catch((err) => {
+            console.log(err.statusCode)
+          })
+        
+
+      })
+      .catch(err => {
+          console.log(err);
+      })
+}
+
+exports.getReset = (req,res,next) => {
+    const codeNumber = req.body.codeNumber;
+    user.findOne({resetToken: codeNumber, resetExpresion: {$gt: Date.now()}})
+      .then(user => {
+          if(user)
+          {
+            return res.status(200).json({"message: ":"code number found (sucess)",user:user});
+          }
+          return res.status(400).json({"message:":"(error!!) code number not found"});
+           
+      })
+      .catch(err=> {
+          console.log(err);
+          
+
+      })
+}
+
+exports.newPassword = (req,res,next) => {
+    const codeNumber = req.params.codeNumber;
+    const password = req.body.password;
+    const cPassword = req.body.cPassword;
+    console.log('password' + password);
+    console.log('cPassword' + cPassword);
+    user.findOne({resetToken: codeNumber})
+      .then(user => {
+          if(!user)
+          {
+            return res.status(400).json({"message:":"(error!!) code number not found"});
+            
+          }
+          else if (password != cPassword ) {
+            return res.status(400).json({"message:":"(error!!) confirm password not coorect"});
+            
+          }
+          bcrypt
+            .hash(password,12)
+            .then(hashedPassword => {
+            
+                
+                user.password = hashedPassword;
+            
+                user.save();
+                return res.status(200).json({"message: ":"code number found (sucess)",user:user});
+            })
+       })
+      .catch(err=> {
+          console.log(err);
+          
+
+      })
+}
+
+
+
+//   /reset password (send by mailget)
