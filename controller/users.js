@@ -139,7 +139,7 @@ exports.postUpdateUser = (req,res,next) => {
         
     })
     .then(result => {
-        res.status(200).json({"message":"user updated"});
+        res.status(200).json({"message":"user updated",user:result});
         console.log(result);
     })
 
@@ -162,7 +162,7 @@ exports.getLogin = (req,res,next) => {
 // reset password (send by mailget)
 exports.postRset = (req,res,next) => {
     console.log('req.body.gmail  ' + req.body.gmail);
-    const token = Math.floor(Math.random() * 1000000);
+    let token = Math.floor(Math.random() * 1000000);
     if(token <= 99999)
     {
         token = token +100000;
