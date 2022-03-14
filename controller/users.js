@@ -216,7 +216,7 @@ exports.postRset = (req,res,next) => {
       })
 }
 
-exports.getReset = (req,res,next) => {
+exports.postReset = (req,res,next) => {
     const codeNumber = req.body.codeNumber;
     user.findOne({resetToken: codeNumber, resetExpresion: {$gt: Date.now()}})
       .then(user => {
