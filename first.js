@@ -4,6 +4,8 @@ const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
 
 
+const cors = require('cors');
+
 //const http = require("http");
 //const routes = require('./routse');
 const path = require('path');
@@ -22,6 +24,8 @@ const port = process.env.PORT || 5000
 
 //const adminData = require('./routes2/adminData');
 //const index = require('./routes2/index');
+
+app.use(cors());
 app.set('view engine','pug');
 
 //app.engine('hbs',expressHbs());
