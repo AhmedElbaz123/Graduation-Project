@@ -272,3 +272,26 @@ exports.newPassword = (req,res,next) => {
 
 
 //   /reset password (send by mailget)
+// //get user
+
+exports.getUser = (req,res,next) => {
+    const userId = req.params.userId;
+    //console.log('userId   ' + userId);
+    user.findById(userId)
+    .then(users => {
+        if(!users){
+            
+            return res.status(404).json({"message":"user not found"});
+        }
+        res.json({'message':'user found',users:users});
+        
+    })
+    .then(result => {
+        console.log(result);
+    })
+
+
+    
+    
+}
+// //get user

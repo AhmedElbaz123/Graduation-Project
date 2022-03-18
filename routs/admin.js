@@ -38,6 +38,7 @@ router.post('/updateUser/:userId',usercontroller.postUpdateUser);
 router.post('/resetPassword',usercontroller.postRset);
 router.post('/postReset',usercontroller.postReset);
 router.post('/newPassword/:codeNumber',usercontroller.newPassword);
+router.get('/getUser/:userId',usercontroller.getUser);
 //  /user update
 //router.get('/login',usercontroller.getLogin);
 module.exports = router;
