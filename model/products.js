@@ -27,8 +27,10 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
+    imageName: String,
+    url: String,
     resetToken: String,
-    resetExpresion: Date 
+    resetExpresion: Date,
 });
 
 module.exports = mongoose.model('users', userSchema);

@@ -3,6 +3,14 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
 
+// uploadimage
+const multerConfig = require('./multer');
+//const imageModel = require('./models/image'); 
+const cloud = require('./cloudinaryConfig');
+const fs = require('fs');
+const User = require('./model/products');
+// ///uploadimage
+
 
 const cors = require('cors');
 
@@ -36,6 +44,47 @@ app.set('views', 'views');
 
 const adminData = require('./routs/admin'); 
 const shopRouter = require('./routs/shop');
+
+//  upload image
+//app.use('/images',express.static('images'));
+
+app.post ('/image/:userGmail',multerConfig, async (req,res) => {
+  const userGmail = req.params.userGmail;
+  const result = await cloud.uploads(req.files[0].path);
+     const imageName =  req.files[0].originalname;
+    const url =  result.url;
+  
+  
+  User.findOne({gmail: userGmail})
+    .then(users => {
+        if(!users){
+            
+            return res.status(404).json({"message":"user not found"});
+        }
+
+        users.imageName= imageName;
+        users.url =  url;
+        return users.save();
+        
+    })
+    .then(result => {
+        // delete image from local
+        fs.unlinkSync(req.files[0].path);
+        // //delete image from local
+        
+        res.status(200).json({"message":"image added",user:result});
+    })
+
+
+
+  // delete image from local
+  //fs.unlinkSync(req.files[0].path);
+  // //delete image from local
+})
+
+
+
+//   //upload image
 
 
 app.use(bodyparser.urlencoded({extended:false}));
