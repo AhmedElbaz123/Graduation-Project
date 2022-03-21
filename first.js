@@ -55,7 +55,7 @@ app.post ('/image/:userGmail',multerConfig, async (req,res) => {
     const url =  result.url;
   
   
-  User.findOne({gmail: userGmail})
+  await User.findOne({gmail: userGmail})
     .then(users => {
         if(!users){
             
