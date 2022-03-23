@@ -2,6 +2,7 @@
 const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
+const bcrypt = require('bcryptjs');
 
 // uploadimage
 const multerConfig = require('./multer');
@@ -48,38 +49,58 @@ const shopRouter = require('./routs/shop');
 //  upload image
 //app.use('/images',express.static('images'));
 
-app.post ('/image/:userGmail',multerConfig, async (req,res) => {
+app.post ('/signUp',multerConfig, async (req,res) => {
   const userGmail = req.params.userGmail;
   const result = await cloud.uploads(req.files[0].path);
-     const imageName =  req.files[0].originalname;
-    const url =  result.url;
+  const imageName =  req.files[0].originalname;
+  const url =  result.url;
+  // edit 
+  const Fname = req.body.FName;
+  const Lname = req.body.LName;
+  const gmail = req.body.Gmail;
+  const gender = req.body.Gender;
+  const age = req.body.Age;
+  const password = req.body.Password;
+  const cPasssword = req.body.CPassword;
   
+  User.findOne({gmail: gmail}).then(userDoc => {
+    if(userDoc){
+        console.log('gmail is already exite');
+        return res.status(400).json({'message': 'gmail is already exite'});
+        
+    } else if(password != cPasssword) {
+        console.log('wrong CPassword');
+        return res.status(4002).json({'message': 'wrong CPassword'});
+        
+    } 
+        return bcrypt
+            .hash(password,12)
+            .then(hashedPassword => {
+            const users = new User({
+                Fname:Fname,
+                Lname:Lname,
+                gmail:gmail,
+                gender:gender,
+                age:age,
+                password:hashedPassword,
+                imageName: imageName,
+                url : url
+            });
+                return users.save();
+        })
+})
+
+.then(result => {
+    // delete image from local
+    fs.unlinkSync(req.files[0].path);
+    // //delete image from local
+    res.status(200).json({'message':'Sign Up', user:result});
+    console.log(result);
+}).catch(err => {
+    console.log(err);
+});
+
   
-  await User.findOne({gmail: userGmail})
-    .then(users => {
-        if(!users){
-            
-            return res.status(404).json({"message":"user not found"});
-        }
-
-        users.imageName= imageName;
-        users.url =  url;
-        return users.save();
-        
-    })
-    .then(result => {
-        // delete image from local
-        fs.unlinkSync(req.files[0].path);
-        // //delete image from local
-        
-        res.status(200).json({"message":"image added",user:result});
-    })
-
-
-
-  // delete image from local
-  //fs.unlinkSync(req.files[0].path);
-  // //delete image from local
 })
 
 
