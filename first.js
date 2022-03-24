@@ -57,7 +57,7 @@ app.post ('/signUp',multerConfig, async (req,res) => {
   const age = req.body.Age;
   const password = req.body.Password;
   const cPasssword = req.body.CPassword;
-  let url = 'https://res.cloudinary.com/egyptegypt/image/upload/v1648147374/a07g5i47z9i7eqv296fm.png';
+  let url = 'https://res.cloudinary.com/egyptegypt/image/upload/v1648162560/u0vbzqyiczyoxtkpfx9n.jpg';
   let imageName = 'default image';
   console.log('file   ' + req.file);
   if(req.files[0]) {
