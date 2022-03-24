@@ -46,15 +46,10 @@ app.set('views', 'views');
 const adminData = require('./routs/admin'); 
 const shopRouter = require('./routs/shop');
 
-//  upload image
+//  upload image and signUp
 //app.use('/images',express.static('images'));
 
 app.post ('/signUp',multerConfig, async (req,res) => {
-  const userGmail = req.params.userGmail;
-  const result = await cloud.uploads(req.files[0].path);
-  const imageName =  req.files[0].originalname;
-  const url =  result.url;
-  // edit 
   const Fname = req.body.FName;
   const Lname = req.body.LName;
   const gmail = req.body.Gmail;
@@ -62,6 +57,16 @@ app.post ('/signUp',multerConfig, async (req,res) => {
   const age = req.body.Age;
   const password = req.body.Password;
   const cPasssword = req.body.CPassword;
+  let url = 'https://res.cloudinary.com/egyptegypt/image/upload/v1648147374/a07g5i47z9i7eqv296fm.png';
+  let imageName = 'default image';
+  console.log('file   ' + req.file);
+  if(req.files[0]) {
+    console.log('in file============>');
+    const result = await cloud.uploads(req.files[0].path);
+    imageName =  req.files[0].originalname;
+    url =  result.url;
+    
+  }
   
   User.findOne({gmail: gmail}).then(userDoc => {
     if(userDoc){
@@ -92,7 +97,9 @@ app.post ('/signUp',multerConfig, async (req,res) => {
 
 .then(result => {
     // delete image from local
+    if(req.files[0]) {
     fs.unlinkSync(req.files[0].path);
+    }
     // //delete image from local
     res.status(200).json({'message':'Sign Up', user:result});
     console.log(result);
@@ -100,12 +107,55 @@ app.post ('/signUp',multerConfig, async (req,res) => {
     console.log(err);
 });
 
+
+
   
 })
 
 
 
-//   //upload image
+//   //upload image signUp
+
+// updateUser
+app.post('/updateUser/:userId',multerConfig,async (req,res) => {
+    const userId = req.params.userId;
+    console.log('userId   ' + userId);
+    const Fname = req.body.FName;
+    const Lname = req.body.LName;
+    const gender = req.body.Gender;
+    const age = req.body.Age;
+    const result = await cloud.uploads(req.files[0].path);
+    const imageName =  req.files[0].originalname;
+    const url =  result.url;
+    
+
+    User.findById(userId)
+    .then(users => {
+        if(!users){
+            
+            return res.status(404).json({"message":"user not found"});
+        }
+
+        users.Fname = Fname;
+        users.Lname = Lname;
+        users.gender = gender;
+        users.age = age;
+        users.imageName =  imageName;
+        users.url = url;
+        return users.save();
+        
+    })
+    .then(result => {
+        // delete image from local
+        fs.unlinkSync(req.files[0].path);
+        // //delete image from local
+        res.status(200).json({"message":"user updated",user:result});
+        console.log(result);
+    })
+
+})
+// //updateUser
+
 
 
 app.use(bodyparser.urlencoded({extended:false}));
