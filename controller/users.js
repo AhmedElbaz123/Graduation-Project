@@ -295,3 +295,48 @@ exports.getUser = (req,res,next) => {
     
 }
 // //get user
+
+// change password
+
+exports.changePassword = (req,res,next) => {
+    const userId = req.params.userId;
+    const currentPassword = req.body.currentPassword;
+    const password = req.body.password;
+    const cPassword = req.body.cPassword;
+    
+
+    user.findById(userId).then(users => {
+        if(!users){
+            console.log('user not found*************************');
+
+            return res.status(404).json({'message': 'user not found'})
+            
+
+        }
+        bcrypt 
+            .compare(currentPassword, users.password)
+            .then(doMatch => {
+                if(doMatch) {
+                    bcrypt
+                    .hash(password,12)
+                    .then(hashedPassword => {
+            
+                
+                        users.password = hashedPassword;
+            
+                        users.save();
+                        console.log('password change------------------*********');
+                        
+                    })
+                    return res.status(200).json({"message: ":"message':'password change",user:users});
+                }
+                res.status(400).json({'message':'wrong current password'});
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(400).json({'message':'error'});
+            })
+    })    
+};
+
+// //change password

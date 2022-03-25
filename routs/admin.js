@@ -39,6 +39,7 @@ router.post('/resetPassword',usercontroller.postRset);
 router.post('/postReset',usercontroller.postReset);
 router.post('/newPassword/:codeNumber',usercontroller.newPassword);
 router.get('/getUser/:userId',usercontroller.getUser);
+router.post('/changePassword/:userId',usercontroller.changePassword);
 //  /user update
 //router.get('/login',usercontroller.getLogin);
 module.exports = router;
