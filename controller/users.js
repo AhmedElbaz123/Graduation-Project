@@ -224,7 +224,7 @@ exports.postReset = (req,res,next) => {
           {
             return res.status(200).json({"message: ":"code number found (sucess)",user:user});
           }
-          return res.status(400).json({"message:":"(error!!) code number not found"});
+          return res.status(400).json({"message":"( error ) code number not valid"});
            
       })
       .catch(err=> {
