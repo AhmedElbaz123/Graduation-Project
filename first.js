@@ -351,7 +351,7 @@ app.use('/posts', postRoutes);
 // mongoConnect(() => {
 //     app.listen(5000);
 // });
-// app.use(
+// app.use( 
 //     session({
 //       secret: 'my secret',
 //       resave: false,
