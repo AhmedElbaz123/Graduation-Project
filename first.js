@@ -254,8 +254,7 @@ app.patch('/updatePost/:postId/:userId',multerConfig, async(req,res) => {
         
         const files = req.files;
         let i = 0; 
-        for(const file of files){
-            //console.log('urls ===> ' + files);    
+        for(const file of files){ 
             const result = await cloud.uploads(req.files[i].path);
             imageName.push(req.files[i].originalname);
             urls.push(result.url);
