@@ -54,6 +54,30 @@ router.get("/",(req, res, next) =>{
     });
 });
 
+//  person's posts
+router.get("/userPosts/:userId",(req, res, next) =>{
+   const userId = req.params.userId;
+    Post.find({ownerId:userId})
+    .then(docs => {
+        console.log();
+        if(!docs || docs.length == 0){
+            return res.status(404).json({'message':'The user has no posts'});    
+        }
+        
+        res.status(200).json(docs);
+        
+        
+       
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error: err
+        });
+    });
+});
+//  person's posts
+
 
 //create post
 router.post('/:ownerId',(req, res, next) => {
