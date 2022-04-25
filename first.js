@@ -200,7 +200,7 @@ app.post('/createPost/:ownerId',multerConfig, async(req,res) => {
         _id: new mongoose.Types.ObjectId(),
         price: req.body.price,
         ownerId:req.params.ownerId,
-        ownerName:req.body.ownerName,
+        phoneNumber:req.body.phoneNumber,
         location: req.body.location,
         numberofbedrooms: req.body.numberofbedrooms,
         numberofbeds: req.body.numberofbeds,
@@ -271,7 +271,7 @@ app.patch('/updatePost/:postId/:userId',multerConfig, async(req,res) => {
         }else {
             post.price= req.body.price;
             post.ownerId = post.ownerId;
-            post.ownerName = post.ownerName;
+            post.phoneNumber = post.phoneNumber;
             post.location =  req.body.location;
             post.numberofbedrooms =  req.body.numberofbedrooms;
             post.numberofbeds =  req.body.numberofbeds;

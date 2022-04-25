@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require("mongoose");
 const multer = require('multer');
-
+const User = require('../model/products');
 //get all posts
 
 router.get("/",(req, res, next) =>{
@@ -11,9 +11,34 @@ router.get("/",(req, res, next) =>{
     Post.find()
     .exec()
     .then(docs => {
-        console.log(docs[1]);
+        let Dpost = [];
+        const posts = docs;
+        let i = 0;
+        for(const post of posts){ 
+            User.findById(docs[i].ownerId)
+            .then(result => {
+                const lengthOfPost = posts.length;
+                // post.push(docs[i],result.Fname,result.Lname);
+                let postName = post;
+                let FName = result.Fname;
+                let LName = result.Lname;
+                
+                let url = result.url;
+                Dpost[i] = [postName,FName +' ' + LName,url]; 
+                //Dpost.push(postName,FName,LName,url);
+                i = i+1 ;
+                if(i == lengthOfPost){
+                    res.status(200).json({Dpost});
+                }
+           
+            })
+            
+            
+        
+        }
+        
        // if(docs.length >=0){
-            res.status(200).json(docs);
+            
         //}else{
         //   res.status(404).json({
         //        massage:'No posts found'

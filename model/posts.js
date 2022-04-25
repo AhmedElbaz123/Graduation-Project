@@ -13,8 +13,8 @@ const postSchema = new Schema({
         type: String,
        required: true
     },
-    ownerName:{
-        type : String,
+    phoneNumber:{
+        type : Number,
         required : true
 
     },
