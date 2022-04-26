@@ -116,17 +116,27 @@ router.post('/:ownerId',(req, res, next) => {
 //get post by id
 router.get('/:postId',(req, res, next) =>{
     const id = req.params.postId;
+    let post = [];
     Post.findById(id)
     .exec()
     .then(doc => {
-        console.log(doc);
-        if(doc){
-            res.status(200).json(doc);
-        }else{
+        if(!doc){
             res.status(404).json({
                 message: 'No valid entry found for provided id'
             });
         }
+        User.findById(doc.ownerId)
+        .then(user => {
+            post[0] = doc;
+            post[1] = user.Fname + ' ' + user.Lname;
+            post[2] = user.url;
+            if(doc){
+                res.status(200).json(post);
+            }
+
+        })        
+            
+        
        
     })
     .catch(err => {
