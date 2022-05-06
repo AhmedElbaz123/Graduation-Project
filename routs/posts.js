@@ -4,6 +4,7 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const multer = require('multer');
 const User = require('../model/products');
+const Comment = require('../model/comment');
 //get all posts
 
 router.get("/",(req, res, next) =>{
@@ -185,6 +186,83 @@ router.delete('/:postId/:userId',(req, res, next) =>{
        });
    });
 });
+
+// add comments
+router.post('/addComment/:postId/:userId',(req, res, next) =>{
+    const id = req.params.postId;
+    const userId = req.params.userId;
+    const comment = new Comment({
+        _id: new mongoose.Types.ObjectId(),
+        postId: id,
+        ownerId: userId,
+        comment: req.body.comment,
+        time: new Date().toString()
+        
+    })
+    comment.save()
+    .then(result => {
+        res.status(200).json(result);
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error: err
+        });
+    });
+    
+ });
+// add comments
+
+// get post comment
+router.get("/getComments/:postId",(req, res, next) =>{
+    const postId = req.params.postId;
+     Comment.find({postId:postId})
+     .then(comments => {
+         if(!comments || comments.length == 0){
+             return res.status(400).json({'message':'No Comments'});    
+         }
+         const commentPosts = comments;
+         console.log('comments.length ==>' + commentPosts.length);
+         let comment = [];
+         let i = 0;
+         for(let i = 0 ; i< commentPosts.length; i++){ 
+            User.findById(comments[i].ownerId)
+            .then(result => {
+                const lengthOfComment = commentPosts.length;
+                // post.push(docs[i],result.Fname,result.Lname);
+                let commentDetails = comments[i];
+                let FName = result.Fname;
+                let LName = result.Lname;
+                
+                let url = result.url;
+                comment[i] = [commentDetails,FName +' ' + LName,url]; 
+                //Dpost.push(postName,FName,LName,url);
+                //i++ ;
+                if(i == lengthOfComment -1 ){
+                    res.status(200).json({comment});
+                }
+           
+            })
+        
+            
+            
+            
+        
+        }
+         
+         
+         
+        
+     })
+     .catch(err => {
+         console.log(err);
+         res.status(500).json({
+             error: err
+         });
+     });
+ });
+
+// //get post comment
 
 
 module.exports = router;
