@@ -17,19 +17,26 @@ router.get("/",(req, res, next) =>{
         for(let i = 0 ; i< posts.length; i++){ 
             User.findById(docs[i].ownerId)
             .then(result => {
-                const lengthOfPost = posts.length;
-                // post.push(docs[i],result.Fname,result.Lname);
-                let postName = posts[i];
-                let FName = result.Fname;
-                let LName = result.Lname;
+                Comment.find({postId:docs[i]._id})
+                .then(comments => {
+                    
+                    
+                    const lengthOfPost = posts.length;
+                    // post.push(docs[i],result.Fname,result.Lname);
+                    let postName = posts[i];
+                    let countComments = comments.length;
+                    let FName = result.Fname;
+                    let LName = result.Lname;
+                    
+                    let url = result.url;
+                    Dpost[i] = [postName,countComments + ' comments',FName +' ' + LName,url]; 
+                    //Dpost.push(postName,FName,LName,url);
+                    //i++ ;
+                    if(i == lengthOfPost -1 ){
+                        res.status(200).json({Dpost});
+                    }
+                })
                 
-                let url = result.url;
-                Dpost[i] = [postName,FName +' ' + LName,url]; 
-                //Dpost.push(postName,FName,LName,url);
-                //i++ ;
-                if(i == lengthOfPost -1 ){
-                    res.status(200).json({Dpost});
-                }
            
             })
             
@@ -263,6 +270,26 @@ router.get("/getComments/:postId",(req, res, next) =>{
  });
 
 // //get post comment
+
+//delete comment 
+router.delete('/deleteComment/:commentId/:userId',(req, res, next) =>{
+    const id = req.params.commentId;
+    const userId = req.params.userId;
+    Comment.remove({_id: id,ownerId:userId})
+    .exec()
+    .then(result =>{
+        res.status(200).json(result);
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error: err,
+            message: 'Not the owner of the comment'
+ 
+        });
+    });
+ });
+// /delete comments 
 
 
 module.exports = router;
