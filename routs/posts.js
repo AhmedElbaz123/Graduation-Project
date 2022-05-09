@@ -67,12 +67,24 @@ router.get("/userPosts/:userId",(req, res, next) =>{
    const userId = req.params.userId;
     Post.find({ownerId:userId})
     .then(docs => {
-        console.log();
         if(!docs || docs.length == 0){
             return res.status(404).json({'message':'The user has no posts'});    
         }
+        const posts = docs;
+        let postUser = [];
+        for(let i = 0 ; i< posts.length ; i++){
+            Comment.find({postId:docs[i]._id})
+            .then(comments => {
+                postUser[i] = [docs[i],comments.length + ' comments'];
+                if(i == posts.length - 1){
+                    
+                    res.status(200).json(postUser);
+                }
+
+            })
+        }
         
-        res.status(200).json(docs);
+        
         
         
        
@@ -135,12 +147,17 @@ router.get('/:postId',(req, res, next) =>{
         }
         User.findById(doc.ownerId)
         .then(user => {
-            post[0] = doc;
-            post[1] = user.Fname + ' ' + user.Lname;
-            post[2] = user.url;
-            if(doc){
-                res.status(200).json(post);
-            }
+            Comment.find({postId:doc._id})
+            .then(comments => {
+                post[0] = doc;
+                post[1] = comments.length + ' comments';
+                post[2] = user.Fname + ' ' + user.Lname;
+                post[3] = user.url;
+                if(doc){
+                    res.status(200).json(post);
+                }
+            })
+            
 
         })        
             
