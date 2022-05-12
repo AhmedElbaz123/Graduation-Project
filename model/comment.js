@@ -18,6 +18,10 @@ const postSchema = new Schema({
         required : true
 
     },
+    timeAgo:{
+        type : String,
+
+    },
     time:Date
   
 });

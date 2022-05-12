@@ -260,6 +260,42 @@ router.get("/getComments/:postId",(req, res, next) =>{
                 
                 let url = result.url;
                 comment[i] = [commentDetails,FName +' ' + LName,url]; 
+
+                const date1 = comments[i].time;
+                const date2 = new Date();
+
+                // To calculate the time difference of two dates
+                const Difference_In_Time = date2.getTime() - date1.getTime();
+
+                // To calculate the no. of days between two dates
+                const Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
+
+
+                if((Difference_In_Time / 60000) <= 1 ){
+
+                    comments[i].timeAgo = '1 minute ago';
+
+                } else if((Difference_In_Time / 60000) < 60){
+
+                    comments[i].timeAgo = Math.floor((Difference_In_Time / 60000)) + ' minutes ago' ; 
+
+                } else if ((Difference_In_Time / 60000) < 1440 ) {
+
+                    comments[i].timeAgo = Math.floor((Difference_In_Time / 60000)/60) + ' hours ago' ;
+
+                } else if((Difference_In_Time / 60000) < 43200){
+
+                    comments[i].timeAgo = Math.floor((Difference_In_Time / 60000)/1440) + ' days ago' ;
+
+                } else if((Difference_In_Time / 60000) < 525600){
+
+                    comments[i].timeAgo = Math.floor((Difference_In_Time / 60000)/43200) + ' month ago' ;
+
+                } else {
+                    comments[i].timeAgo = Math.floor((Difference_In_Time / 60000)/518400) + ' years ago' ;
+                }
+
+               
                 //Dpost.push(postName,FName,LName,url);
                 //i++ ;
                 if(i == lengthOfComment -1 ){
