@@ -5,6 +5,63 @@ const mongoose = require("mongoose");
 const multer = require('multer');
 const User = require('../model/products');
 const Comment = require('../model/comment');
+
+//search by filter
+
+
+
+
+
+router.get("/search",(req, res, next)=>{
+    Post.find(req.query)
+    .exec()
+    .then(docs => {
+        console.log(docs);
+
+        let Dpost = [];
+        const posts = docs;
+        for(let i = 0 ; i< posts.length; i++){ 
+            User.findById(docs[i].ownerId)
+            .then(result => {
+                Comment.find({postId:docs[i]._id})
+                .then(comments => {
+                    
+                    
+                    const lengthOfPost = posts.length;
+                    // post.push(docs[i],result.Fname,result.Lname);
+                    let postName = posts[i];
+                    let countComments = comments.length;
+                    let FName = result.Fname;
+                    let LName = result.Lname;
+                    
+                    let url = result.url;
+                    Dpost[i] = [postName,countComments + ' comments',FName +' ' + LName,url]; 
+                    //Dpost.push(postName,FName,LName,url);
+                    //i++ ;
+                    if(i == lengthOfPost -1 ){
+                        res.status(200).json({Dpost});
+                    }
+                })
+                
+           
+            })
+            
+            
+            
+        
+        }
+       
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error: err
+        });
+    });
+});
+
+//end search by filter
+
 //get all posts
 
 router.get("/",(req, res, next) =>{
@@ -343,6 +400,8 @@ router.delete('/deleteComment/:commentId/:userId',(req, res, next) =>{
     });
  });
 // /delete comments 
+
+
 
 
 module.exports = router;
