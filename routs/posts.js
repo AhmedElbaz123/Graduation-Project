@@ -13,6 +13,11 @@ const Comment = require('../model/comment');
 
 
 router.get("/search",(req, res, next)=>{
+    
+    if(req.query.location){
+        const text = req.query.location.toLowerCase() 
+        req.query.location = text;
+    }
     Post.find(req.query)
     .exec()
     .then(docs => {

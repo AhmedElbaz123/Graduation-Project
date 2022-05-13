@@ -19,7 +19,8 @@ const postSchema = new Schema({
 
     },
     location:{
-        type: String
+        type: String,
+        lowercase:true
     },
 
     numberofbedrooms:{
