@@ -202,6 +202,7 @@ app.post('/createPost/:ownerId',multerConfig, async(req,res) => {
         ownerId:req.params.ownerId,
         phoneNumber:req.body.phoneNumber,
         location: req.body.location,
+        locationMap: req.body.locationMap,
         numberofbedrooms: req.body.numberofbedrooms,
         numberofbeds: req.body.numberofbeds,
         wifi: req.body.wifi,

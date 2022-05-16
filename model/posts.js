@@ -20,7 +20,11 @@ const postSchema = new Schema({
     },
     location:{
         type: String,
-        lowercase:true
+        lowercase:true,
+        required : true
+    },
+    locationMap:{
+        type: String,
     },
 
     numberofbedrooms:{
