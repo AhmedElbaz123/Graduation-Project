@@ -424,7 +424,7 @@ router.delete('/deleteComment/:commentId/:userId',(req, res, next) =>{
     Comment.remove({_id: id,ownerId:userId})
     .exec()
     .then(result =>{
-        res.status(200).json(result);
+        res.status(200).json({message:'comment deleted'});
     })
     .catch(err => {
         console.log(err);
