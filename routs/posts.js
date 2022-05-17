@@ -5,6 +5,8 @@ const mongoose = require("mongoose");
 const multer = require('multer');
 const User = require('../model/products');
 const Comment = require('../model/comment');
+const reservedPosts = require('../model/reservedPosts');
+const notification = require('../model/notification');
 
 //search by filter
 
@@ -287,7 +289,36 @@ router.post('/addComment/:postId/:userId',(req, res, next) =>{
     })
     comment.save()
     .then(result => {
-        res.status(200).json(result);
+        Post.findById(req.params.postId)
+        .then(post=>{
+            
+            User.findById(req.params.userId)
+            .then(user => {
+                const ownerPost = post.ownerId;
+                const name = user.Fname + ' ' + user.Lname;
+                const urlImage = user.url;
+                const newNotification = new notification({
+                    _id: new mongoose.Types.ObjectId(),
+                    senderId: req.params.userId,
+                    receiverId: ownerPost,
+                    name: name,
+                    urlImage:urlImage,
+                    text: name + ' commented on your post',
+                    time: new Date().toString()
+                })
+                newNotification.save()
+                .then(notification => {
+                    console.log(notification);
+                    res.status(200).json({message:'comment added' ,comment:result});
+                })
+
+
+
+            })
+
+        })
+
+       
     })
     .catch(err => {
         console.log(err);
@@ -405,6 +436,119 @@ router.delete('/deleteComment/:commentId/:userId',(req, res, next) =>{
     });
  });
 // /delete comments 
+
+// postBooked
+
+router.post('/bookNow/:postId/:userId',(req,res,next)=> {
+    const reservedPost = new reservedPosts({
+        _id: new mongoose.Types.ObjectId(),
+        postId: req.params.postId,
+        userId: req.params.userId,
+        time: new Date().toString()
+        
+    })
+    reservedPost.save()
+    .then(result => {
+        //console.log(result);
+        Post.findById(req.params.postId)
+        .then(post=>{
+            
+            User.findById(req.params.userId)
+            .then(user => {
+                const ownerPost = post.ownerId;
+                const name = user.Fname + ' ' + user.Lname;
+                const urlImage = user.url;
+                const newNotification = new notification({
+                    _id: new mongoose.Types.ObjectId(),
+                    senderId: req.params.userId,
+                    receiverId: ownerPost,
+                    name: name,
+                    urlImage:urlImage,
+                    text: name + ' booked your apartment now',
+                    time: new Date().toString()
+                })
+                newNotification.save()
+                .then(notification => {
+                    console.log(notification);
+                    res.status(200).json({message:'postbooked',results:result});
+                })
+
+
+
+            })
+
+        })
+        
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error: err
+        });
+    });
+})
+
+// //postBooked
+
+// get notification
+router.get('/getNotification/:userId',(req, res, next) =>{
+    notification.find({receiverId:req.params.userId})
+    .then(notifications => {
+        if(!notifications){
+            res.status(404).json({
+                message: 'No Notification avialable'
+            });
+        }
+        const countNoti = notifications;
+        for(let i= 0; i< countNoti.length; i++){
+            const date1 = notifications[i].time;
+            const date2 = new Date();
+
+            // To calculate the time difference of two dates
+            const Difference_In_Time = date2.getTime() - date1.getTime();
+
+            // To calculate the no. of days between two dates
+            const Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
+
+
+            if((Difference_In_Time / 60000) <= 1 ){
+
+                notifications[i].timeAgo = '1 minute ago';
+
+            } else if((Difference_In_Time / 60000) < 60){
+
+                notifications[i].timeAgo = Math.floor((Difference_In_Time / 60000)) + ' minutes ago' ; 
+
+            } else if ((Difference_In_Time / 60000) < 1440 ) {
+
+                notifications[i].timeAgo = Math.floor((Difference_In_Time / 60000)/60) + ' hours ago' ;
+
+            } else if((Difference_In_Time / 60000) < 43200){
+
+                notifications[i].timeAgo = Math.floor((Difference_In_Time / 60000)/1440) + ' days ago' ;
+
+            } else if((Difference_In_Time / 60000) < 525600){
+
+                notifications[i].timeAgo = Math.floor((Difference_In_Time / 60000)/43200) + ' month ago' ;
+
+            } else {
+                notifications[i].timeAgo = Math.floor((Difference_In_Time / 60000)/518400) + ' years ago' ;
+            }
+            if(i == countNoti.length - 1){
+                res.status(200).json(notifications);
+            }
+        }
+        
+        
+        
+       
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({error: err});
+    });
+});
+// //get notification
 
 
 
