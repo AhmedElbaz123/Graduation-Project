@@ -48,12 +48,19 @@ const postSchema = new Schema({
     conditioner:{
         type:Boolean
     },
+    timeAgo:{
+        type : String,
 
+    },
     description:{
         type: String
     },
+    numberOfLikes:{
+        type: Number
+    },
     imageName: Array,
-    url: Array
+    url: Array,
+    time:Date
   
 });
 

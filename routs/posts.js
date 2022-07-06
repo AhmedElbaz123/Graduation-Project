@@ -7,6 +7,8 @@ const User = require('../model/products');
 const Comment = require('../model/comment');
 const reservedPosts = require('../model/reservedPosts');
 const notification = require('../model/notification');
+const Like = require('../model/like');
+const { query } = require('express');
 
 //search by filter
 
@@ -83,22 +85,67 @@ router.get("/",(req, res, next) =>{
             .then(result => {
                 Comment.find({postId:docs[i]._id})
                 .then(comments => {
+                    Like.find({postId:docs[i]._id})
+                    .then(likes => {
+                        const likesCo = likes.length;
+                        //console.log('likesCo==>  ' + likesCo  + '     '+ docs[i]._id);
+                        const lengthOfPost = posts.length;
+                        // post.push(docs[i],result.Fname,result.Lname);
+                        let postName = posts[i];
+                        let countComments = comments.length;
+                        let FName = result.Fname;
+                        let LName = result.Lname;
+                        
+                        let url = result.url;
+                        docs[i].numberOfLikes = likesCo;
+                        Dpost[i] = [postName,countComments + ' comments',FName +' ' + LName,url];
+                        
+                        // time ago 
+                        console.log( 'docs[i].time===> ' + docs[i].time)
+                        let date1 = docs[i].time;
+                        const date2 = new Date();
+
+                        // To calculate the time difference of two dates
+                        const Difference_In_Time = date2.getTime() - date1.getTime();
+
+                        // To calculate the no. of days between two dates
+                        const Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
+
+
+                        if((Difference_In_Time / 60000) <= 1 ){
+
+                            docs[i].timeAgo = '1 minute ago';
+
+                        } else if((Difference_In_Time / 60000) < 60){
+
+                            docs[i].timeAgo = Math.floor((Difference_In_Time / 60000)) + ' minutes ago' ; 
+
+                        } else if ((Difference_In_Time / 60000) < 1440 ) {
+
+                            docs[i].timeAgo = Math.floor((Difference_In_Time / 60000)/60) + ' hours ago' ;
+
+                        } else if((Difference_In_Time / 60000) < 43200){
+
+                            docs[i].timeAgo = Math.floor((Difference_In_Time / 60000)/1440) + ' days ago' ;
+
+                        } else if((Difference_In_Time / 60000) < 525600){
+
+                            docs[i].timeAgo = Math.floor((Difference_In_Time / 60000)/43200) + ' month ago' ;
+
+                        } else {
+                            docs[i].timeAgo = Math.floor((Difference_In_Time / 60000)/518400) + ' years ago' ;
+                        }
+
+                        // //time ago 
+                        //Dpost.push(postName,FName,LName,url);
+                        //i++ ;
+                        if(i == lengthOfPost -1 ){
+                            res.status(200).json({Dpost});
+                        }
+                    })
                     
                     
-                    const lengthOfPost = posts.length;
-                    // post.push(docs[i],result.Fname,result.Lname);
-                    let postName = posts[i];
-                    let countComments = comments.length;
-                    let FName = result.Fname;
-                    let LName = result.Lname;
                     
-                    let url = result.url;
-                    Dpost[i] = [postName,countComments + ' comments',FName +' ' + LName,url]; 
-                    //Dpost.push(postName,FName,LName,url);
-                    //i++ ;
-                    if(i == lengthOfPost -1 ){
-                        res.status(200).json({Dpost});
-                    }
                 })
                 
            
@@ -213,13 +260,56 @@ router.get('/:postId',(req, res, next) =>{
         .then(user => {
             Comment.find({postId:doc._id})
             .then(comments => {
-                post[0] = doc;
-                post[1] = comments.length + ' comments';
-                post[2] = user.Fname + ' ' + user.Lname;
-                post[3] = user.url;
-                if(doc){
-                    res.status(200).json(post);
-                }
+                Like.find({postId:doc._id})
+                    .then(likes => {
+                        const likesCo = likes.length;
+                        //console.log('likesCo==>  ' + likesCo  + '     '+ docs[i]._id);
+                        doc.numberOfLikes = likesCo;
+                        // time ago 
+                        //console.log( 'docs[i].time===> ' + doc[i].time)
+                        let date1 = doc.time;
+                        const date2 = new Date();
+
+                        // To calculate the time difference of two dates
+                        const Difference_In_Time = date2.getTime() - date1.getTime();
+
+                        // To calculate the no. of days between two dates
+                        const Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
+
+
+                        if((Difference_In_Time / 60000) <= 1 ){
+
+                            doc.timeAgo = '1 minute ago';
+
+                        } else if((Difference_In_Time / 60000) < 60){
+
+                            doc.timeAgo = Math.floor((Difference_In_Time / 60000)) + ' minutes ago' ; 
+
+                        } else if ((Difference_In_Time / 60000) < 1440 ) {
+
+                            doc.timeAgo = Math.floor((Difference_In_Time / 60000)/60) + ' hours ago' ;
+
+                        } else if((Difference_In_Time / 60000) < 43200){
+
+                            doc.timeAgo = Math.floor((Difference_In_Time / 60000)/1440) + ' days ago' ;
+
+                        } else if((Difference_In_Time / 60000) < 525600){
+
+                            doc.timeAgo = Math.floor((Difference_In_Time / 60000)/43200) + ' month ago' ;
+
+                        } else {
+                            doc.timeAgo = Math.floor((Difference_In_Time / 60000)/518400) + ' years ago' ;
+                        }
+
+                        /////
+                        post[0] = doc;
+                        post[1] = comments.length + ' comments';
+                        post[2] = user.Fname + ' ' + user.Lname;
+                        post[3] = user.url;
+                        if(doc){
+                            res.status(200).json(post);
+                        }
+                    })
             })
             
 
@@ -549,6 +639,103 @@ router.get('/getNotification/:userId',(req, res, next) =>{
     });
 });
 // //get notification
+
+// create like
+
+router.get('/addLike/:postId/:userId',(req, res, next) =>{
+
+    const id = req.params.postId;
+    const userId = req.params.userId;
+
+    Like.find({postId:req.params.postId,ownerId:req.params.userId}).then(likes => {
+        console.log('in post');
+        console.log('likes ==>' + likes);
+        //console.log(likes[0].postId + '==' + req.params.postId + likes[0].ownerId + '==' + req.params.userId);
+        if(likes.length == 0){
+
+            const like = new Like({
+                _id: new mongoose.Types.ObjectId(),
+                postId: id,
+                ownerId: userId,
+                time: new Date().toString()
+                
+            })
+            like.save()
+            .then(result => {
+                Post.findById(req.params.postId)
+                .then(post=>{
+                    
+                    User.findById(req.params.userId)
+                    .then(user => {
+                        const ownerPost = post.ownerId;
+                        const name = user.Fname + ' ' + user.Lname;
+                        const urlImage = user.url;
+                        const newNotification = new notification({
+                            _id: new mongoose.Types.ObjectId(),
+                            senderId: req.params.userId,
+                            receiverId: ownerPost,
+                            name: name,
+                            urlImage:urlImage,
+                            text: name + ' liked on your post',
+                            time: new Date().toString()
+                        })
+                        newNotification.save()
+                        .then(notification => {
+                            console.log(notification);
+                            return (res.status(200).json({message:'like added' ,like:result}));
+                        })
+        
+        
+        
+                    })
+        
+                })
+        
+               
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(500).json({
+                    error: err
+                });
+            });
+
+            
+            
+        } else {
+            console.log('like found======>' + likes);
+            Like.remove({postId:req.params.postId,ownerId:req.params.userId})
+            .exec()
+            .then(result =>{
+                res.status(200).json({message:'disLike sucess '});
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(500).json({
+                    error: err,
+                    message: 'Not the owner of the comment'
+        
+                });
+            });
+        }
+        
+        
+        
+        //console.log('likes.ownerId ==> ' + likes.ownerId  + '  req.params.userId==> ' +req.params.userId );
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error: err,
+            message: 'Not the owner of the comment'
+ 
+        });
+    });
+
+    
+    
+ });
+// create like
 
 
 

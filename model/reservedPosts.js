@@ -18,7 +18,10 @@ const postSchema = new Schema({
     },
     timeAgo:{
         type:String
-    }
+    },
+    faceCardUrl:Array,
+    backCardUrl:Array
+
 
 })
 

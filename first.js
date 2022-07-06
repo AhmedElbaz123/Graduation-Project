@@ -12,6 +12,8 @@ const cloud = require('./cloudinaryConfig');
 const fs = require('fs');
 const User = require('./model/products');
 const Post = require('./model/posts');
+const reservedPosts = require('./model/reservedPosts');
+const notification = require('./model/notification');
 // ///uploadimage
 
 
@@ -210,7 +212,8 @@ app.post('/createPost/:ownerId',multerConfig, async(req,res) => {
         conditioner: req.body.conditioner,
         description: req.body.description,
         imageName: imageName,
-        url: urls
+        url: urls,
+        time: new Date().toString()
    
        
     });
@@ -242,6 +245,116 @@ app.post('/createPost/:ownerId',multerConfig, async(req,res) => {
 });
 
 // creat post
+
+
+// book now
+app.post('/bookNow/:postId/:userId',multerConfig, async(req,res) => {
+
+    // call python
+    console.log('req.files[0].path ==> ' + req.files[0].path);
+    console.log('req.files[1].path ==> ' + req.files[1].path);
+    
+    function callCard(req,res){
+        var spawn = require("child_process").spawn;
+        console.log("callpython =>>>>>>>>");
+        var process = spawn('python',["ocr-arabic/main.py","req.files[0].path"]);
+      
+        process.stdout.on('data',function(data){
+            res.send(data.toString());
+            const resultdata = cloud.uploads(data);
+            imageName =  data.originalname;
+            urlscard =  resultdata.url;
+            console.log('process==> urlscard ==>   ' + urlscard );
+            console.log('process==>  ' + data );
+        });
+        
+      }
+
+    // //call python
+   
+    if (!req.files ) {
+        
+       return res.status(404).json({"message":"you must upload id image"});
+        
+        
+    } 
+    let urlsFront = [];
+    let urlsBack = [];
+        //console.log('urls ===> ' + files);    
+    const resultFace = await cloud.uploads(req.files[0].path);
+    imageName =  req.files[0].originalname;
+    urlsFront =  resultFace.url;
+    const resultBack = await cloud.uploads(req.files[1].path);
+    imageName =  req.files[1].originalname;
+    urlsBack =  resultBack.url;
+    callCard(req,res)
+    const reservedPost = new reservedPosts({
+        _id: new mongoose.Types.ObjectId(),
+        postId: req.params.postId,
+        userId: req.params.userId,
+        faceCardUrl:urlsFront,
+        backCardUrl:urlsBack,
+        time: new Date().toString()
+        
+    })
+
+    
+    reservedPost.save()
+    .then(result =>{
+        Post.findById(req.params.postId)
+        .then(post=>{
+            
+            User.findById(req.params.userId)
+            .then(user => {
+                const ownerPost = post.ownerId;
+                const name = user.Fname + ' ' + user.Lname;
+                const urlImage = user.url;
+                const newNotification = new notification({
+                    _id: new mongoose.Types.ObjectId(),
+                    senderId: req.params.userId,
+                    receiverId: ownerPost,
+                    name: name,
+                    urlImage:urlImage,
+                    text: name + ' booked your apartment now',
+                    time: new Date().toString()
+                })
+                newNotification.save()
+                .then(notification => {
+                    //console.log(notification);
+                    res.status(200).json({message:'postbooked',results:result});
+                })
+
+
+
+            })
+
+        })
+        
+        //
+
+
+    if(req.files[0]) {
+        fs.unlinkSync(req.files[0].path);
+        fs.unlinkSync(req.files[1].path);
+            
+    } 
+    //console.log(result);
+    res.status(200).json({
+        message: 'Successfully booked',
+        createdPost:result
+    }) 
+      
+    })
+    
+    .catch(err => {
+        //console.log(err);
+        res.status(500).json({
+            error: err
+        });
+    });
+});
+
+// //book now
 
 // updatePost
 app.patch('/updatePost/:postId/:userId',multerConfig, async(req,res) => {
