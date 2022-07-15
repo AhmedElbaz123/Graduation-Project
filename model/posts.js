@@ -60,6 +60,7 @@ const postSchema = new Schema({
     },
     imageName: Array,
     url: Array,
+    ownersLike: Array,
     time:{
         type:Date,
         default:'2022-07-01T15:31:05.000+00:00'

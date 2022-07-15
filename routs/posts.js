@@ -146,10 +146,12 @@ router.get("/",(req, res, next) =>{
                         
                         let url = result.url;
                         docs[i].numberOfLikes = likesCo;
+                        docs[i].ownersLike = likes;
+                        console.log('docs[i].ownersLike ' + docs[i].ownersLike + '  likes.ownerId'  + likes.ownerId);
                         Dpost[i] = [postName,countComments + ' comments',FName +' ' + LName,url];
                         
                         // time ago 
-                        console.log( 'docs[i].time===> ' + docs[i].time)
+                        //console.log( 'docs[i].time===> ' + docs[i].time)
                         let date1 = docs[i].time;
                         const date2 = new Date();
 
@@ -833,7 +835,149 @@ router.get('/addLike/:postId/:userId',(req, res, next) =>{
  });
 // create like
 
+// //console.log('location==>' + (doc.locationMap.slice(0,5) - 2) + '   ' + doc.locationMap.slice(19,24));
+// router.get("/nearestPlace/:locationMap",(req, res, next) =>{
+//     const leftPart = req.params.locationMap.slice(0,4);
+//     const rightPart = req.params.locationMap.slice(19,24);
+
+// locationMap
+router.get("/nearestPlace/:locationMap",(req, res, next) =>{
+    const location =  (req.params.locationMap).toString().split(" ");
+    const leftPart = (Math.round((Number(location[0]).toFixed(3)) * 100));
+    const rightPart = (Math.round((Number(location[1]).toFixed(3)) * 100)) 
+    const leftPartPo = Number(leftPart) +2;
+    const leftPartNe = leftPart -2;
+    const rightPartPo = Number(rightPart) +2;
+    const rightPartNe = rightPart -2;
+    console.log('leftPart ' + rightPart );
+    console.log('leftPartPo  ' + leftPartPo + ' leftPartNe ' + leftPartNe + ' rightPartPo ' + rightPartPo + ' rightPartNe' + rightPartNe );
+    //console.log(' leftPartPos==> ' + leftPartPo );
+    Post.find()
+    .exec()
+    .then(docs => {
+        let Dpost = [];
+        const posts = docs;
+        for(let i = 0 ; i< posts.length; i++){
+            let locationPost =  (docs[i].locationMap).split(" ");
+            let leftPost = (Math.round((Number(locationPost[0]).toFixed(3)) * 100));
+            let rightPost = (Math.round((Number(locationPost[1]).toFixed(3)) * 100));
+            let j = 0;
+            
+            if(leftPartNe  <= leftPost && leftPost <= leftPartPo ){
+                console.log('in if ========> ');
+                //console.log('leftPart- .02 ' + leftPart- .02 + ' leftPost ' + leftPart+ .02);
+                if(rightPartNe  <= rightPost && rightPost <= rightPartPo ){
+                    console.log('leftPost  ' + leftPost  + ' rightPost ' + rightPost  +'   ==> '+ docs[i]._id);
+                    // User.findById(docs[i].ownerId)
+                    // .then(result => {
+                    //     Comment.find({postId:docs[i]._id})
+                    //     .then(comments => {
+                    //         Like.find({postId:docs[i]._id})
+                    //         .then(likes => {
+                    //             const likesCo = likes.length;
+                    //             //console.log('likesCo==>  ' + likesCo  + '     '+ docs[i]._id);
+                    //             const lengthOfPost = posts.length;
+                    //             // post.push(docs[i],result.Fname,result.Lname);
+                    //             let postName = posts[i];
+                    //             let countComments = comments.length;
+                    //             let FName = result.Fname;
+                    //             let LName = result.Lname;
+                                
+                    //             let url = result.url;
+                    //             docs[i].numberOfLikes = likesCo;
+                    //             //docs[i].ownersLike = likes;
+                    //             //console.log('docs[i].ownersLike ' + docs[i].ownersLike + '  likes.ownerId'  + likes.ownerId);
+                    //             Dpost[j] = [postName,countComments + ' comments',FName +' ' + LName,url];
+                    //             j++;
+                    //             // time ago 
+                    //             //console.log( 'docs[i].time===> ' + docs[i].time)
+                    //             let date1 = docs[i].time;
+                    //             const date2 = new Date();
+
+                    //             // To calculate the time difference of two dates
+                    //             const Difference_In_Time = date2.getTime() - date1.getTime();
+
+                    //             // To calculate the no. of days between two dates
+                    //             const Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
 
 
+                    //             if((Difference_In_Time / 60000) <= 1 ){
+
+                    //                 docs[i].timeAgo = '1 minute ago';
+
+                    //             } else if((Difference_In_Time / 60000) < 60){
+
+                    //                 docs[i].timeAgo = Math.floor((Difference_In_Time / 60000)) + ' minutes ago' ; 
+
+                    //             } else if ((Difference_In_Time / 60000) < 1440 ) {
+
+                    //                 docs[i].timeAgo = Math.floor((Difference_In_Time / 60000)/60) + ' hours ago' ;
+
+                    //             } else if((Difference_In_Time / 60000) < 43200){
+
+                    //                 docs[i].timeAgo = Math.floor((Difference_In_Time / 60000)/1440) + ' days ago' ;
+
+                    //             } else if((Difference_In_Time / 60000) < 525600){
+
+                    //                 docs[i].timeAgo = Math.floor((Difference_In_Time / 60000)/43200) + ' month ago' ;
+
+                    //             } else {
+                    //                 docs[i].timeAgo = Math.floor((Difference_In_Time / 60000)/518400) + ' years ago' ;
+                    //             }
+
+                    //             // //time ago 
+                    //             //Dpost.push(postName,FName,LName,url);
+                    //             //i++ ;
+                    //             if(i == lengthOfPost -1 ){
+                    //                 res.status(200).json({Dpost});
+                    //             }
+                    //         })
+                            
+                            
+                            
+                    //     })
+                        
+                
+                    // })
+                    Dpost.push(docs[i]);
+                    console.log('Dpost  ' + Dpost);
+                }
+                
+            }
+            if(i == docs.length -1 ){
+                if(Dpost.length == 0){
+                    return res.status(400).json({message:"There are no places nearby"});
+                }   
+                res.status(200).json({Dpost});
+            }
+                //return res.status(400).json({message:"There are no places nearby"});
+            
+            
+            
+            
+            
+        
+        }
+        if(Dpost.length == 0){
+            return res.status(400).json({message:"There are no places nearby"});
+        }
+       // if(docs.length >=0){
+            
+        //}else{
+        //   res.status(404).json({
+        //        massage:'No posts found'
+        //    });
+       // }
+       
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error: err
+        });
+    });
+});
+
+// //locationMap
 
 module.exports = router;
