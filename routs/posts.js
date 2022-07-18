@@ -48,6 +48,7 @@ router.get("/search",(req, res, next)=>{
                         
                         let url = result.url;
                         docs[i].numberOfLikes = likesCo;
+                        docs[i].ownersLike = likes;
                         Dpost[i] = [postName,countComments + ' comments',FName +' ' + LName,url];
                         
                         // time ago 
@@ -123,7 +124,7 @@ router.get("/search",(req, res, next)=>{
 
 router.get("/",(req, res, next) =>{
    
-    Post.find()
+    Post.find().sort({time: -1})
     .exec()
     .then(docs => {
         let Dpost = [];
@@ -243,6 +244,7 @@ router.get("/userPosts/:userId",(req, res, next) =>{
                         const lengthOfPost = posts.length;
                         // post.push(docs[i],result.Fname,result.Lname);
                         docs[i].numberOfLikes = likesCo;
+                        docs[i].ownersLike = likes;
                         postUser[i] = [docs[i],comments.length + ' comments'];
                         
                         // time ago 
@@ -361,6 +363,7 @@ router.get('/:postId',(req, res, next) =>{
                         const likesCo = likes.length;
                         //console.log('likesCo==>  ' + likesCo  + '     '+ docs[i]._id);
                         doc.numberOfLikes = likesCo;
+                        doc.ownersLike = likes;
                         // time ago 
                         //console.log( 'docs[i].time===> ' + doc[i].time)
                         post[0] = doc;
@@ -521,7 +524,7 @@ router.post('/addComment/:postId/:userId',(req, res, next) =>{
 // get post comment
 router.get("/getComments/:postId",(req, res, next) =>{
     const postId = req.params.postId;
-     Comment.find({postId:postId})
+     Comment.find({postId:postId}).sort({time: -1})
      .then(comments => {
          if(!comments || comments.length == 0){
              return res.status(400).json({'message':'No Comments'});    
@@ -680,7 +683,7 @@ router.post('/bookNow/:postId/:userId',(req,res,next)=> {
 
 // get notification
 router.get('/getNotification/:userId',(req, res, next) =>{
-    notification.find({receiverId:req.params.userId})
+    notification.find({receiverId:req.params.userId}).sort({time: -1})
     .then(notifications => {
         if(!notifications){
             res.status(404).json({
